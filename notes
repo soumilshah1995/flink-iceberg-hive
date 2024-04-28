@@ -1,0 +1,36 @@
+docker compose build
+docker compose up
+
+
+docker compose exec -it flink ./bin/sql-client.sh
+
+
+CREATE CATALOG iceberg_hive WITH (
+        'type' = 'iceberg',
+        'catalog-type'='hive',
+        'warehouse' = 's3a://warehouse',
+        'hive-conf-dir' = './conf');
+
+CREATE DATABASE `iceberg_hive`.`mydb`;
+
+USE `iceberg_hive`.`mydb`;
+
+-- Create the orders table
+CREATE TABLE orders (
+    order_id STRING,
+    name STRING,
+    order_value DOUBLE,
+    priority INT,
+    state STRING,
+    order_date STRING,
+    customer_id STRING,
+    ts STRING
+)
+
+-- Insert static values into the orders table
+INSERT INTO orders
+VALUES
+    ('order001', 'Product A', 100.00, 1, 'California', '2024-04-03', 'cust001', '1234567890'),
+    ('order002', 'Product B', 150.00, 2, 'New York', '2024-04-03', 'cust002', '1234567890'),
+    ('order003', 'Product C', 200.00, 1, 'Texas', '2024-04-03', 'cust003', '1234567890');
+
